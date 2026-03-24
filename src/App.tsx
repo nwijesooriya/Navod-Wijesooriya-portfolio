@@ -3,6 +3,15 @@ import { Mail, Phone, Github, Linkedin, MapPin, ExternalLink, Code, Database, Wr
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [formValues, setFormValues] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof typeof formValues, string>>>({});
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -15,6 +24,102 @@ function App() {
     const newTheme = !isDarkMode;
     setIsDarkMode(newTheme);
     localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+  };
+
+  const validateForm = (values: typeof formValues) => {
+    const errors: Partial<Record<keyof typeof formValues, string>> = {};
+    const trimmed = {
+      name: values.name.trim(),
+      email: values.email.trim(),
+      subject: values.subject.trim(),
+      message: values.message.trim()
+    };
+    const emailPattern = /^\S+@\S+\.\S+$/;
+
+    if (!trimmed.name) {
+      errors.name = 'Name is required.';
+    }
+    if (!trimmed.email) {
+      errors.email = 'Email is required.';
+    } else if (!emailPattern.test(trimmed.email)) {
+      errors.email = 'Enter a valid email address.';
+    }
+    if (!trimmed.subject) {
+      errors.subject = 'Subject is required.';
+    }
+    if (!trimmed.message) {
+      errors.message = 'Message is required.';
+    }
+
+    return errors;
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+    setFieldErrors((prev) => {
+      if (!prev[name as keyof typeof formValues]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[name as keyof typeof formValues];
+      return next;
+    });
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const errors = validateForm(formValues);
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      setSubmitStatus('error');
+      setSubmitMessage('Please fix the errors below and try again.');
+      return;
+    }
+
+    const formspreeEndpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT;
+    if (!formspreeEndpoint) {
+      setSubmitStatus('error');
+      setSubmitMessage('Message service is not configured yet. Please try again later.');
+      return;
+    }
+
+    setSubmitStatus('sending');
+    setSubmitMessage('');
+
+    try {
+      const response = await fetch(formspreeEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          name: formValues.name.trim(),
+          email: formValues.email.trim(),
+          subject: formValues.subject.trim(),
+          message: formValues.message.trim()
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Submission failed');
+      }
+
+      setSubmitStatus('success');
+      setSubmitMessage('Thanks! Your message has been sent.');
+      setFormValues({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+      setFieldErrors({});
+    } catch (error) {
+      setSubmitStatus('error');
+      setSubmitMessage('Sorry, something went wrong. Please try again in a moment.');
+    }
   };
 
   const skills = {
@@ -383,7 +488,9 @@ function App() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             <a 
-              href="mailto:navodwijesooriya54@gmail.com"
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=navodwijesooriya54@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className={`${themeClasses.cardBg}/80 backdrop-blur-md rounded-2xl p-8 hover:bg-gradient-to-br hover:from-blue-500/10 hover:to-purple-500/10 transition-all duration-300 transform hover:scale-105 border ${themeClasses.cardBorder} hover:border-blue-500/50 shadow-lg hover:shadow-xl group`}
             >
               <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl w-fit mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -434,34 +541,100 @@ function App() {
           {/* Contact Form */}
           <div className={`${themeClasses.cardBg} rounded-2xl p-10 shadow-xl border ${themeClasses.cardBorder} max-w-2xl mx-auto`}>
             <h3 className={`text-2xl font-bold ${themeClasses.text} mb-8`}>📝 Drop me a message</h3>
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit} noValidate>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  className={`w-full px-6 py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-lg`}
-                />
-                <input
-                  type="email"
-                  placeholder="your.email@example.com"
-                  className={`w-full px-6 py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-lg`}
-                />
+                <div>
+                  <label htmlFor="contact-name" className="sr-only">Your Name</label>
+                  <input
+                    id="contact-name"
+                    name="name"
+                    type="text"
+                    placeholder="Your Name"
+                    value={formValues.name}
+                    onChange={handleChange}
+                    aria-invalid={Boolean(fieldErrors.name)}
+                    aria-describedby={fieldErrors.name ? 'contact-name-error' : undefined}
+                    className={`w-full px-6 py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-lg`}
+                  />
+                  {fieldErrors.name && (
+                    <p id="contact-name-error" className="mt-2 text-sm text-red-400 text-left">
+                      {fieldErrors.name}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="contact-email" className="sr-only">Email address</label>
+                  <input
+                    id="contact-email"
+                    name="email"
+                    type="email"
+                    placeholder="your.email@example.com"
+                    value={formValues.email}
+                    onChange={handleChange}
+                    aria-invalid={Boolean(fieldErrors.email)}
+                    aria-describedby={fieldErrors.email ? 'contact-email-error' : undefined}
+                    className={`w-full px-6 py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-lg`}
+                  />
+                  {fieldErrors.email && (
+                    <p id="contact-email-error" className="mt-2 text-sm text-red-400 text-left">
+                      {fieldErrors.email}
+                    </p>
+                  )}
+                </div>
               </div>
-              <input
-                type="text"
-                placeholder="Subject"
-                className={`w-full px-6 py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-lg`}
-              />
-              <textarea
-                rows={6}
-                placeholder="Your message..."
-                className={`w-full px-6 py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 resize-none text-lg`}
-              ></textarea>
+              <div>
+                <label htmlFor="contact-subject" className="sr-only">Subject</label>
+                <input
+                  id="contact-subject"
+                  name="subject"
+                  type="text"
+                  placeholder="Subject"
+                  value={formValues.subject}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(fieldErrors.subject)}
+                  aria-describedby={fieldErrors.subject ? 'contact-subject-error' : undefined}
+                  className={`w-full px-6 py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-lg`}
+                />
+                {fieldErrors.subject && (
+                  <p id="contact-subject-error" className="mt-2 text-sm text-red-400 text-left">
+                    {fieldErrors.subject}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="contact-message" className="sr-only">Message</label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  rows={6}
+                  placeholder="Your message..."
+                  value={formValues.message}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(fieldErrors.message)}
+                  aria-describedby={fieldErrors.message ? 'contact-message-error' : undefined}
+                  className={`w-full px-6 py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 resize-none text-lg`}
+                ></textarea>
+                {fieldErrors.message && (
+                  <p id="contact-message-error" className="mt-2 text-sm text-red-400 text-left">
+                    {fieldErrors.message}
+                  </p>
+                )}
+              </div>
+              {submitMessage && (
+                <div
+                  className={`text-sm text-left ${submitStatus === 'success' ? 'text-green-400' : 'text-red-400'}`}
+                  role="status"
+                  aria-live="polite"
+                >
+                  {submitMessage}
+                </div>
+              )}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-xl font-semibold text-lg"
+                disabled={submitStatus === 'sending'}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-xl font-semibold text-lg disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Send Message
+                {submitStatus === 'sending' ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>
