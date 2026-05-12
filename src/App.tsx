@@ -512,7 +512,7 @@ function App() {
             </a>
             
             <a 
-              href="https://github.com/nwijesooirya"
+              href="https://github.com/nwijesooriya"
               target="_blank"
               rel="noopener noreferrer"
               className={`${themeClasses.cardBg}/80 backdrop-blur-md rounded-2xl p-8 hover:bg-gradient-to-br hover:from-purple-500/10 hover:to-pink-500/10 transition-all duration-300 transform hover:scale-105 border ${themeClasses.cardBorder} hover:border-purple-500/50 shadow-lg hover:shadow-xl group`}
