@@ -521,7 +521,7 @@ function App() {
                 <Github className="w-8 h-8 text-white" />
               </div>
               <h3 className={`${themeClasses.text} font-semibold mb-3 text-lg`}>GitHub</h3>
-              <p className={`${themeClasses.textSecondary} text-sm`}>nwijesoorya</p>
+              <p className={`${themeClasses.textSecondary} text-sm`}>nwijesooriya</p>
             </a>
             
             <a 
