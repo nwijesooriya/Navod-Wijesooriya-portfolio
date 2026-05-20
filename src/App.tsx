@@ -310,6 +310,7 @@ function App() {
                   <div>
                     <h4 className={`font-semibold ${themeClasses.text} text-lg mb-1`}>Experience</h4>
                     <p className={`${themeClasses.textSecondary}`}>IT Technician Intern - Ministry of Defence, Sri Lanka (2022)</p>
+                    <p className={`${themeClasses.textSecondary}`}>Software Developer Intern - SLTMobitel (2026)</p>
                   </div>
                 </div>
               </div>
