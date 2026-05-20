@@ -298,8 +298,8 @@ function App() {
                     <GraduationCap className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h4 className={`font-semibold ${themeClasses.text} text-lg mb-1`}>Current Education</h4>
-                    <p className={`${themeClasses.textSecondary}`}>B.Sc. (Hons.) Information Technology - SLIIT (2023-Present)</p>
+                    <h4 className={`font-semibold ${themeClasses.text} text-lg mb-3`}>Current Education</h4>
+                    <p className={`${themeClasses.textSecondary} whitespace-nowrap mr-4`}>💠 B.Sc. (Hons.) Information Technology - SLIIT (2023-Present)</p>
                   </div>
                 </div>
                 
@@ -308,9 +308,9 @@ function App() {
                     <User className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h4 className={`font-semibold ${themeClasses.text} text-lg mb-1`}>Experience</h4>
-                    <p className={`${themeClasses.textSecondary}`}>IT Technician Intern - Ministry of Defence, Sri Lanka (2022)</p>
-                    <p className={`${themeClasses.textSecondary}`}>Software Developer Intern - SLTMobitel (2026)</p>
+                    <h4 className={`font-semibold ${themeClasses.text} text-lg mb-3`}>Experience</h4>
+                    <p className={`${themeClasses.textSecondary} whitespace-nowrap mr-4 mb-2`}>💠 IT Technician Intern - Ministry of Defence, Sri Lanka (2022)</p>
+                    <p className={`${themeClasses.textSecondary} whitespace-nowrap`}>💠 Software Developer Intern - SLTMobitel (2026)</p>
                   </div>
                 </div>
               </div>
@@ -492,13 +492,13 @@ function App() {
               href="https://mail.google.com/mail/?view=cm&fs=1&to=navodwijesooriya54@gmail.com"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${themeClasses.cardBg}/80 backdrop-blur-md rounded-2xl p-8 hover:bg-gradient-to-br hover:from-blue-500/10 hover:to-purple-500/10 transition-all duration-300 transform hover:scale-105 border ${themeClasses.cardBorder} hover:border-blue-500/50 shadow-lg hover:shadow-xl group`}
+              className={`${themeClasses.cardBg}/80 backdrop-blur-md rounded-2xl p-8 sm:px-10 text-center hover:bg-gradient-to-br hover:from-blue-500/10 hover:to-purple-500/10 transition-all duration-300 transform hover:scale-105 border ${themeClasses.cardBorder} hover:border-blue-500/50 shadow-lg hover:shadow-xl group`}
             >
               <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl w-fit mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Mail className="w-8 h-8 text-white" />
               </div>
               <h3 className={`${themeClasses.text} font-semibold mb-3 text-lg`}>Email</h3>
-              <p className={`${themeClasses.textSecondary} text-sm break-all`}>navodwijesooriya54@gmail.com</p>
+              <p className={`${themeClasses.textSecondary} text-sm whitespace-nowrap truncate inline-block w-full text-left sm:text-center`}>navodwijesooriya54@gmail.com</p>
             </a>
             
             <a 
