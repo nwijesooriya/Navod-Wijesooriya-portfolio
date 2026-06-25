@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, Github, Linkedin, MapPin, ExternalLink, Code, Database, Wrench, User, GraduationCap, Sun, Moon } from 'lucide-react';
+import { Mail, Phone, Github, Linkedin, MapPin, ExternalLink, Code, Database, Wrench, User, GraduationCap, Sun, Moon, ChevronLeft, ChevronRight } from 'lucide-react';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -12,6 +12,18 @@ function App() {
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof typeof formValues, string>>>({});
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
+  const [showAllProjects, setShowAllProjects] = useState(false);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 350;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -209,7 +221,57 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.bg} ${themeClasses.text}`}>
+    <>
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.8s ease-out;
+        }
+        
+        .animate-slide-up {
+          animation: slideUp 0.8s ease-out;
+        }
+        
+        /* Custom scrollbar for Webkit browsers */
+        ::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+          background: ${isDarkMode ? '#374151' : '#e5e7eb'};
+          border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+          background: #9333ea;
+          border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+          background: #7c3aed;
+        }
+      `}</style>
+      <div className={`min-h-screen transition-colors duration-300 ${themeClasses.bg} ${themeClasses.text}`}>
       {/* Navigation */}
       <nav className={`fixed top-0 w-full backdrop-blur-md z-50 border-b transition-colors duration-300 ${themeClasses.navBg} ${themeClasses.navBorder}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -217,11 +279,11 @@ function App() {
             <div className={`text-xl font-bold ${themeClasses.text}`}>Navod Wijesooriya</div>
             <div className="flex items-center space-x-8">
               <div className="hidden md:flex space-x-8">
-                <a href="#home" className={`${themeClasses.textSecondary} hover:text-blue-500 transition-colors duration-200`}>Home</a>
-                <a href="#projects" className={`${themeClasses.textSecondary} hover:text-purple-500 transition-colors duration-200`}>Projects</a>
-                <a href="#skills" className={`${themeClasses.textSecondary} hover:text-teal-500 transition-colors duration-200`}>Skills</a>
-                <a href="#about" className={`${themeClasses.textSecondary} hover:text-orange-500 transition-colors duration-200`}>About</a>
-                <a href="#contact" className={`${themeClasses.textSecondary} hover:text-pink-500 transition-colors duration-200`}>Contact</a>
+                <a href="#home" className={`${themeClasses.textSecondary} hover:text-blue-500 transition-all duration-200 hover:scale-105 relative group`}>Home<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all duration-200 group-hover:w-full"></span></a>
+                <a href="#projects" className={`${themeClasses.textSecondary} hover:text-purple-500 transition-all duration-200 hover:scale-105 relative group`}>Projects<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-500 transition-all duration-200 group-hover:w-full"></span></a>
+                <a href="#skills" className={`${themeClasses.textSecondary} hover:text-teal-500 transition-all duration-200 hover:scale-105 relative group`}>Skills<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-teal-500 transition-all duration-200 group-hover:w-full"></span></a>
+                <a href="#about" className={`${themeClasses.textSecondary} hover:text-orange-500 transition-all duration-200 hover:scale-105 relative group`}>About<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-200 group-hover:w-full"></span></a>
+                <a href="#contact" className={`${themeClasses.textSecondary} hover:text-pink-500 transition-all duration-200 hover:scale-105 relative group`}>Contact<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-500 transition-all duration-200 group-hover:w-full"></span></a>
               </div>
               <button
                 onClick={toggleTheme}
@@ -240,7 +302,7 @@ function App() {
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+      <section id="home" className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 animate-fade-in">
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <div className="mb-12">
@@ -266,17 +328,19 @@ function App() {
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <a 
                   href="#contact"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-xl font-semibold text-lg"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl font-semibold text-lg relative overflow-hidden group"
                 >
-                  Get In Touch
+                  <span className="relative z-10">Get In Touch</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </a>
                 <a 
                   href="/Navod_Wijesooriya_CV.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="border-2 border-teal-500 text-teal-500 px-10 py-4 rounded-xl hover:bg-teal-500 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-xl font-semibold text-lg"
+                  className="border-2 border-teal-500 text-teal-500 px-10 py-4 rounded-xl hover:bg-teal-500 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-2xl font-semibold text-lg relative overflow-hidden group"
                 >
-                  Download CV
+                  <span className="relative z-10">Download CV</span>
+                  <div className="absolute inset-0 bg-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </a>
               </div>
             </div>
@@ -285,7 +349,7 @@ function App() {
       </section>
 
       {/* About Section */}
-      <section id="about" className={`py-20 px-4 sm:px-6 lg:px-8 ${themeClasses.sectionBg}`}>
+      <section id="about" className={`py-24 px-4 sm:px-6 lg:px-8 ${themeClasses.sectionBg} animate-slide-up`}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <h2 className={`text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent`}>About Me</h2>
@@ -370,70 +434,172 @@ function App() {
       </section>
 
       {/* Featured Projects Section */}
-      <section id="projects" className={`py-20 px-4 sm:px-6 lg:px-8 ${themeClasses.sectionBg}`}>
+      <section id="projects" className={`py-24 px-4 sm:px-6 lg:px-8 ${themeClasses.sectionBg} animate-slide-up`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className={`text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}>Featured Projects</h2>
             <p className={`text-xl ${themeClasses.textSecondary}`}>A collection of my recent work and contributions</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {projects.map((project, index) => (
-              <div 
-                key={index}
-                className={`${themeClasses.cardBg} rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border ${themeClasses.cardBorder} overflow-hidden group`}
-              >
-                <div className="h-56 overflow-hidden relative">
-                  <img 
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          {!showAllProjects ? (
+            <div className="space-y-6">
+              <div className="relative">
+                <div 
+                  ref={scrollContainerRef}
+                  className="overflow-x-auto pb-4 scroll-smooth" 
+                  style={{ maxWidth: '750px', margin: '0 auto', scrollbarWidth: 'thin', scrollbarColor: isDarkMode ? '#9333ea #374151' : '#9333ea #e5e7eb' }}
+                >
+                  <div className="flex gap-6" style={{ width: 'max-content' }}>
+                    {(() => {
+                      const recentProjects = [projects[5], projects[6], projects[0]];
+                      
+                      return recentProjects.map((project, index) => (
+                        <div 
+                          key={index}
+                          className={`${themeClasses.cardBg} rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border ${themeClasses.cardBorder} overflow-hidden group w-80 flex-shrink-0 cursor-pointer`}
+                        >
+                          <div className="h-48 overflow-hidden relative">
+                            <img 
+                              src={project.image}
+                              alt={project.title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <a 
+                                href={project.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors duration-200 shadow-lg"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalLink className="w-5 h-5 text-gray-900" />
+                              </a>
+                            </div>
+                          </div>
+                          <div className="p-6">
+                            <h3 className={`text-xl font-bold ${themeClasses.text} mb-3 group-hover:text-purple-400 transition-colors duration-200`}>{project.title}</h3>
+                            
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              <span className="text-xs text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30 font-medium">{project.timeline}</span>
+                              <span className="text-xs text-teal-400 bg-teal-500/20 px-3 py-1 rounded-full border border-teal-500/30 font-medium">{project.team}</span>
+                            </div>
+                            
+                            <p className={`${themeClasses.textSecondary} mb-4 leading-relaxed text-justify text-sm line-clamp-3`}>{project.description}</p>
+                            
+                            <div className="flex flex-wrap gap-2">
+                              {project.technologies.slice(0, 4).map((tech, techIndex) => (
+                                <span 
+                                  key={techIndex}
+                                  className={`text-xs ${themeClasses.cardBg} ${themeClasses.textSecondary} px-3 py-1 rounded-full hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-200 border ${themeClasses.cardBorder} hover:border-purple-500/50 cursor-default`}
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ));
+                    })()}
+                  </div>
                 </div>
-                <div className="p-8">
-                  <div className="flex justify-between items-start mb-6">
-                    <h3 className={`text-2xl font-bold ${themeClasses.text}`}>{project.title}</h3>
-                    <a 
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`${themeClasses.textSecondary} hover:text-blue-500 transition-colors duration-200 hover:scale-110 transform`}
-                    >
-                      <ExternalLink className="w-6 h-6" />
-                    </a>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-3 mb-6">
-                    <span className="text-sm text-blue-400 bg-blue-500/20 px-4 py-2 rounded-full border border-blue-500/30 font-medium">{project.timeline}</span>
-                    <span className="text-sm text-teal-400 bg-teal-500/20 px-4 py-2 rounded-full border border-teal-500/30 font-medium">{project.team}</span>
-                  </div>
-                  
-                  <p className={`${themeClasses.textSecondary} mb-8 leading-relaxed text-justify text-lg`}>{project.description}</p>
-                  
-                  <div className="flex flex-wrap gap-3">
-                    {project.technologies.map((tech, techIndex) => (
-                      <span 
-                        key={techIndex}
-                        className={`text-sm ${themeClasses.cardBg} ${themeClasses.textSecondary} px-4 py-2 rounded-full hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-200 border ${themeClasses.cardBorder} hover:border-purple-500/50 cursor-default`}
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                
+                <button
+                  onClick={() => handleScroll('left')}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-3 rounded-full shadow-xl hover:scale-110 transition-all duration-300 z-10 hidden sm:block"
+                  aria-label="Scroll left"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                
+                <button
+                  onClick={() => handleScroll('right')}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-3 rounded-full shadow-xl hover:scale-110 transition-all duration-300 z-10 hidden sm:block"
+                  aria-label="Scroll right"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
               </div>
-            ))}
-          </div>
+              
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setShowAllProjects(true)}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl hover:scale-105 transition-all duration-300 font-semibold text-lg whitespace-nowrap shadow-lg hover:shadow-xl"
+                >
+                  View All Projects
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {projects.map((project, index) => (
+                  <div 
+                    key={index}
+                    className={`${themeClasses.cardBg} rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border ${themeClasses.cardBorder} overflow-hidden group`}
+                  >
+                    <div className="h-56 overflow-hidden relative">
+                      <img 
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div className="p-8">
+                      <div className="flex justify-between items-start mb-6">
+                        <h3 className={`text-2xl font-bold ${themeClasses.text}`}>{project.title}</h3>
+                        <a 
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`${themeClasses.textSecondary} hover:text-blue-500 transition-colors duration-200 hover:scale-110 transform`}
+                        >
+                          <ExternalLink className="w-6 h-6" />
+                        </a>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-3 mb-6">
+                        <span className="text-sm text-blue-400 bg-blue-500/20 px-4 py-2 rounded-full border border-blue-500/30 font-medium">{project.timeline}</span>
+                        <span className="text-sm text-teal-400 bg-teal-500/20 px-4 py-2 rounded-full border border-teal-500/30 font-medium">{project.team}</span>
+                      </div>
+                      
+                      <p className={`${themeClasses.textSecondary} mb-8 leading-relaxed text-justify text-lg`}>{project.description}</p>
+                      
+                      <div className="flex flex-wrap gap-3">
+                        {project.technologies.map((tech, techIndex) => (
+                          <span 
+                            key={techIndex}
+                            className={`text-sm ${themeClasses.cardBg} ${themeClasses.textSecondary} px-4 py-2 rounded-full hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-200 border ${themeClasses.cardBorder} hover:border-purple-500/50 cursor-default`}
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="flex justify-center mt-12">
+                <button
+                  onClick={() => setShowAllProjects(false)}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-10 py-4 rounded-xl hover:scale-105 transition-all duration-300 font-semibold text-lg"
+                >
+                  Show Less
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className={`py-20 px-4 sm:px-6 lg:px-8 ${themeClasses.bg}`}>
+      <section id="skills" className={`py-24 px-4 sm:px-6 lg:px-8 ${themeClasses.bg} animate-slide-up`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className={`text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-teal-600 to-green-600 bg-clip-text text-transparent`}>Technical Skills</h2>
-            <p className={`text-xl ${themeClasses.textSecondary}`}>Technologies & tools I familier with</p>
+            <p className={`text-xl ${themeClasses.textSecondary}`}>Technologies & tools I'm familiar with</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -500,65 +666,65 @@ function App() {
       
 
       {/* Contact Section */}
-      <section id="contact" className={`py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br ${isDarkMode ? 'from-gray-900 via-blue-900/20 to-purple-900/20' : 'from-gray-50 via-blue-50 to-purple-50'}`}>
+      <section id="contact" className={`py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br ${isDarkMode ? 'from-gray-900 via-blue-900/20 to-purple-900/20' : 'from-gray-50 via-blue-50 to-purple-50'} animate-slide-up`}>
         <div className="max-w-5xl mx-auto text-center">
           <h2 className={`text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}>Let's Connect</h2>
           <p className={`text-xl ${themeClasses.textSecondary} mb-16`}>Ready to collaborate or discuss opportunities</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             <a 
               href="https://mail.google.com/mail/?view=cm&fs=1&to=navodwijesooriya54@gmail.com"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${themeClasses.cardBg}/80 backdrop-blur-md rounded-2xl p-8 sm:px-10 text-center hover:bg-gradient-to-br hover:from-blue-500/10 hover:to-purple-500/10 transition-all duration-300 transform hover:scale-105 border ${themeClasses.cardBorder} hover:border-blue-500/50 shadow-lg hover:shadow-xl group`}
+              className={`${themeClasses.cardBg}/90 backdrop-blur-md rounded-2xl p-6 sm:p-8 text-center hover:bg-gradient-to-br hover:from-blue-500/15 hover:to-purple-500/15 transition-all duration-300 transform hover:-translate-y-2 border ${themeClasses.cardBorder} hover:border-blue-500/50 shadow-lg hover:shadow-2xl group`}
             >
-              <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl w-fit mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Mail className="w-8 h-8 text-white" />
+              <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl w-fit mx-auto mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <Mail className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
               </div>
-              <h3 className={`${themeClasses.text} font-semibold mb-3 text-lg`}>Email</h3>
-              <p className={`${themeClasses.textSecondary} text-sm whitespace-nowrap truncate inline-block w-full text-left sm:text-center`}>navodwijesooriya54@gmail.com</p>
+              <h3 className={`${themeClasses.text} font-semibold mb-2 text-base sm:text-lg`}>Email</h3>
+              <p className={`${themeClasses.textSecondary} text-xs sm:text-sm whitespace-nowrap truncate inline-block w-full text-left sm:text-center`}>navodwijesooriya54@gmail.com</p>
             </a>
             
             <a 
               href="tel:+94785199991"
-              className={`${themeClasses.cardBg}/80 backdrop-blur-md rounded-2xl p-8 hover:bg-gradient-to-br hover:from-teal-500/10 hover:to-green-500/10 transition-all duration-300 transform hover:scale-105 border ${themeClasses.cardBorder} hover:border-teal-500/50 shadow-lg hover:shadow-xl group`}
+              className={`${themeClasses.cardBg}/90 backdrop-blur-md rounded-2xl p-6 sm:p-8 hover:bg-gradient-to-br hover:from-teal-500/15 hover:to-green-500/15 transition-all duration-300 transform hover:-translate-y-2 border ${themeClasses.cardBorder} hover:border-teal-500/50 shadow-lg hover:shadow-2xl group`}
             >
-              <div className="p-3 bg-gradient-to-r from-teal-500 to-green-600 rounded-xl w-fit mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Phone className="w-8 h-8 text-white" />
+              <div className="p-3 bg-gradient-to-r from-teal-500 to-green-600 rounded-xl w-fit mx-auto mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <Phone className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
               </div>
-              <h3 className={`${themeClasses.text} font-semibold mb-3 text-lg`}>Phone</h3>
-              <p className={`${themeClasses.textSecondary} text-sm`}>+94 785 199 991</p>
+              <h3 className={`${themeClasses.text} font-semibold mb-2 text-base sm:text-lg`}>Phone</h3>
+              <p className={`${themeClasses.textSecondary} text-xs sm:text-sm`}>+94 785 199 991</p>
             </a>
             
             <a 
               href="https://github.com/nwijesooriya"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${themeClasses.cardBg}/80 backdrop-blur-md rounded-2xl p-8 hover:bg-gradient-to-br hover:from-purple-500/10 hover:to-pink-500/10 transition-all duration-300 transform hover:scale-105 border ${themeClasses.cardBorder} hover:border-purple-500/50 shadow-lg hover:shadow-xl group`}
+              className={`${themeClasses.cardBg}/90 backdrop-blur-md rounded-2xl p-6 sm:p-8 hover:bg-gradient-to-br hover:from-purple-500/15 hover:to-pink-500/15 transition-all duration-300 transform hover:-translate-y-2 border ${themeClasses.cardBorder} hover:border-purple-500/50 shadow-lg hover:shadow-2xl group`}
             >
-              <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl w-fit mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Github className="w-8 h-8 text-white" />
+              <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl w-fit mx-auto mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <Github className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
               </div>
-              <h3 className={`${themeClasses.text} font-semibold mb-3 text-lg`}>GitHub</h3>
-              <p className={`${themeClasses.textSecondary} text-sm`}>nwijesooriya</p>
+              <h3 className={`${themeClasses.text} font-semibold mb-2 text-base sm:text-lg`}>GitHub</h3>
+              <p className={`${themeClasses.textSecondary} text-xs sm:text-sm`}>nwijesooriya</p>
             </a>
             
             <a 
               href="https://linkedin.com/in/navod-wijesooriya-8557772ba"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${themeClasses.cardBg}/80 backdrop-blur-md rounded-2xl p-8 hover:bg-gradient-to-br hover:from-blue-500/10 hover:to-teal-500/10 transition-all duration-300 transform hover:scale-105 border ${themeClasses.cardBorder} hover:border-blue-500/50 shadow-lg hover:shadow-xl group`}
+              className={`${themeClasses.cardBg}/90 backdrop-blur-md rounded-2xl p-6 sm:p-8 hover:bg-gradient-to-br hover:from-blue-500/15 hover:to-teal-500/15 transition-all duration-300 transform hover:-translate-y-2 border ${themeClasses.cardBorder} hover:border-blue-500/50 shadow-lg hover:shadow-2xl group`}
             >
-              <div className="p-3 bg-gradient-to-r from-blue-500 to-teal-600 rounded-xl w-fit mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Linkedin className="w-8 h-8 text-white" />
+              <div className="p-3 bg-gradient-to-r from-blue-500 to-teal-600 rounded-xl w-fit mx-auto mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <Linkedin className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
               </div>
-              <h3 className={`${themeClasses.text} font-semibold mb-3 text-lg`}>LinkedIn</h3>
-              <p className={`${themeClasses.textSecondary} text-sm`}>Navod Wijesooriya</p>
+              <h3 className={`${themeClasses.text} font-semibold mb-2 text-base sm:text-lg`}>LinkedIn</h3>
+              <p className={`${themeClasses.textSecondary} text-xs sm:text-sm`}>Navod Wijesooriya</p>
             </a>
           </div>
 
           {/* Contact Form */}
-          <div className={`${themeClasses.cardBg} rounded-2xl p-10 shadow-xl border ${themeClasses.cardBorder} max-w-2xl mx-auto`}>
+          <div className={`${themeClasses.cardBg} rounded-2xl p-8 sm:p-10 shadow-xl border ${themeClasses.cardBorder} max-w-2xl mx-auto hover:shadow-2xl transition-shadow duration-300`}>
             <h3 className={`text-2xl font-bold ${themeClasses.text} mb-8`}>📝 Drop me a message</h3>
             <form className="space-y-6" onSubmit={handleSubmit} noValidate>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -573,7 +739,7 @@ function App() {
                     onChange={handleChange}
                     aria-invalid={Boolean(fieldErrors.name)}
                     aria-describedby={fieldErrors.name ? 'contact-name-error' : undefined}
-                    className={`w-full px-6 py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-lg`}
+                    className={`w-full px-5 py-3 sm:px-6 sm:py-4 rounded-xl ${themeClasses.inputBg} ${themeClasses.inputText} border ${themeClasses.inputBorder} focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-base sm:text-lg focus:shadow-lg`}
                   />
                   {fieldErrors.name && (
                     <p id="contact-name-error" className="mt-2 text-sm text-red-400 text-left">
@@ -672,6 +838,7 @@ function App() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
 
