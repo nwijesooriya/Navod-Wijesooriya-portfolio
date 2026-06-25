@@ -173,6 +173,24 @@ function App() {
       team: "5 Members",
       github: "https://github.com/nwijesoorya",
       image: "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=800"
+    },
+    {
+      title: "🏠 BoardingBuddy",
+      description: "A web-based boarding accommodation management platform designed to help students and boarding providers connect efficiently. The system allows users to browse available accommodations, manage listings, view boarding details, and streamline the accommodation search process through a user-friendly interface.",
+      technologies: ["React.js", "Node.js", "Express.js", "MongoDB", "JavaScript"],
+      timeline: "2025",
+      team: "Group Project",
+      github: "https://github.com/Pinidu-Subasinghe/BoardingBuddy",
+      image: "https://images.pexels.com/photos/33613728/pexels-photo-33613728.jpeg?auto=compress&cs=tinysrgb&w=800"
+    },
+    {
+      title: "🎓 Uni-Pilot",
+      description: "A university assistance and student management platform developed to improve access to academic resources, student information, and university-related services. The application focuses on providing a centralized and user-friendly experience for students while demonstrating modern full-stack development practices.",
+      technologies: ["MERN Stack", "React.js", "Node.js", "Express.js", "MongoDB"],
+      timeline: "2025",
+      team: "Academic Project",
+      github: "https://github.com/nwijesooriya/Uni-Pilot",
+      image: "https://images.pexels.com/photos/19125851/pexels-photo-19125851.jpeg?auto=compress&cs=tinysrgb&w=800"
     }
   ];
 
