@@ -447,7 +447,7 @@ function App() {
                 <div 
                   ref={scrollContainerRef}
                   className="overflow-x-auto pb-4 scroll-smooth" 
-                  style={{ maxWidth: '750px', margin: '0 auto', scrollbarWidth: 'thin', scrollbarColor: isDarkMode ? '#9333ea #374151' : '#9333ea #e5e7eb' }}
+                  style={{ maxWidth: '800px', margin: '0 auto', scrollbarWidth: 'thin', scrollbarColor: isDarkMode ? '#9333ea #374151' : '#9333ea #e5e7eb' }}
                 >
                   <div className="flex gap-6" style={{ width: 'max-content' }}>
                     {(() => {
