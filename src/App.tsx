@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, Github, Linkedin, MapPin, ExternalLink, Code, Database, Wrench, User, GraduationCap, Sun, Moon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Mail, Phone, Github, Linkedin, MapPin, ExternalLink, Code, Database, Wrench, User, GraduationCap, Sun, Moon, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -12,7 +12,8 @@ function App() {
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof typeof formValues, string>>>({});
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
-  const [showAllProjects, setShowAllProjects] = useState(false);
+  const [showProjectsModal, setShowProjectsModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
   const handleScroll = (direction: 'left' | 'right') => {
@@ -148,7 +149,8 @@ function App() {
       timeline: "Feb 2025 – Jun 2025",
       team: "5 Members",
       github: "https://github.com/nwijesooirya/CocoHubWebApp",
-      image: "https://images.pexels.com/photos/1045113/pexels-photo-1045113.jpeg"
+      image: "https://images.pexels.com/photos/1045113/pexels-photo-1045113.jpeg",
+      date: "2025-06"
     },
     {
       title: "📊 Online Stock Management System", 
@@ -157,7 +159,8 @@ function App() {
       timeline: "Jul 2024 – Nov 2024",
       team: "4 Members",
       github: "https://github.com/nwijesooirya/UserProfileWebApp",
-      image: "https://images.pexels.com/photos/5716032/pexels-photo-5716032.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/5716032/pexels-photo-5716032.jpeg?auto=compress&cs=tinysrgb&w=800",
+      date: "2024-11"
     },
     {
       title: "💰 Android Mobile App 'SmartSpender'",
@@ -166,7 +169,8 @@ function App() {
       timeline: "Feb 2025 – Jun 2025",
       team: "Individual Project",
       github: "https://github.com/nwijesooirya/SmartSpenderMobileApp",
-      image: "https://images.pexels.com/photos/2068664/pexels-photo-2068664.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/2068664/pexels-photo-2068664.jpeg?auto=compress&cs=tinysrgb&w=800",
+      date: "2025-06"
     },
     {
       title: "📱 Android Mobile App 'HomeEase'",
@@ -175,7 +179,8 @@ function App() {
       timeline: "Feb 2025 – Jun 2025",
       team: "Individual Project",
       github: "https://github.com/nwijesooirya/HomeEase",
-      image: "https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=800",
+      date: "2025-06"
     }, 
     {
       title: "🏋️‍♂️ Online Fitness Management System",
@@ -184,7 +189,8 @@ function App() {
       timeline: "Feb 2024 – Jun 2024", 
       team: "5 Members",
       github: "https://github.com/nwijesoorya",
-      image: "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=800",
+      date: "2024-06"
     },
     {
       title: "🏠 BoardingBuddy",
@@ -193,7 +199,8 @@ function App() {
       timeline: "2025",
       team: "Group Project",
       github: "https://github.com/Pinidu-Subasinghe/BoardingBuddy",
-      image: "https://images.pexels.com/photos/33613728/pexels-photo-33613728.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/33613728/pexels-photo-33613728.jpeg?auto=compress&cs=tinysrgb&w=800",
+      date: "2025-01"
     },
     {
       title: "🎓 Uni-Pilot",
@@ -202,9 +209,10 @@ function App() {
       timeline: "2025",
       team: "Academic Project",
       github: "https://github.com/nwijesooriya/Uni-Pilot",
-      image: "https://images.pexels.com/photos/19125851/pexels-photo-19125851.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/19125851/pexels-photo-19125851.jpeg?auto=compress&cs=tinysrgb&w=800",
+      date: "2025-03"
     }
-  ];
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const themeClasses = {
     bg: isDarkMode ? 'bg-gray-900' : 'bg-gray-50',
@@ -249,6 +257,37 @@ function App() {
         
         .animate-slide-up {
           animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes modalIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+        
+        .animate-modal-in {
+          animation: modalIn 0.3s ease-out;
+        }
+        
+        @keyframes timelineNode {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        .animate-timeline-node {
+          animation: timelineNode 0.5s ease-out forwards;
+          opacity: 0;
         }
         
         /* Custom scrollbar for Webkit browsers */
@@ -441,156 +480,94 @@ function App() {
             <p className={`text-xl ${themeClasses.textSecondary}`}>A collection of my recent work and contributions</p>
           </div>
           
-          {!showAllProjects ? (
-            <div className="space-y-6">
-              <div className="relative">
-                <div 
-                  ref={scrollContainerRef}
-                  className="overflow-x-auto pb-4 scroll-smooth" 
-                  style={{ maxWidth: '800px', margin: '0 auto', scrollbarWidth: 'thin', scrollbarColor: isDarkMode ? '#9333ea #374151' : '#9333ea #e5e7eb' }}
-                >
-                  <div className="flex gap-6" style={{ width: 'max-content' }}>
-                    {(() => {
-                      const recentProjects = [projects[5], projects[6], projects[0]];
-                      
-                      return recentProjects.map((project, index) => (
-                        <div 
-                          key={index}
-                          className={`${themeClasses.cardBg} rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border ${themeClasses.cardBorder} overflow-hidden group w-80 flex-shrink-0 cursor-pointer`}
-                        >
-                          <div className="h-48 overflow-hidden relative">
-                            <img 
-                              src={project.image}
-                              alt={project.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                              <a 
-                                href={project.github}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors duration-200 shadow-lg"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <ExternalLink className="w-5 h-5 text-gray-900" />
-                              </a>
-                            </div>
-                          </div>
-                          <div className="p-6">
-                            <h3 className={`text-xl font-bold ${themeClasses.text} mb-3 group-hover:text-purple-400 transition-colors duration-200`}>{project.title}</h3>
-                            
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              <span className="text-xs text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30 font-medium">{project.timeline}</span>
-                              <span className="text-xs text-teal-400 bg-teal-500/20 px-3 py-1 rounded-full border border-teal-500/30 font-medium">{project.team}</span>
-                            </div>
-                            
-                            <p className={`${themeClasses.textSecondary} mb-4 leading-relaxed text-justify text-sm line-clamp-3`}>{project.description}</p>
-                            
-                            <div className="flex flex-wrap gap-2">
-                              {project.technologies.slice(0, 4).map((tech, techIndex) => (
-                                <span 
-                                  key={techIndex}
-                                  className={`text-xs ${themeClasses.cardBg} ${themeClasses.textSecondary} px-3 py-1 rounded-full hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-200 border ${themeClasses.cardBorder} hover:border-purple-500/50 cursor-default`}
-                                >
-                                  {tech}
-                                </span>
-                              ))}
-                            </div>
+          <div className="space-y-6">
+            <div className="relative">
+              <div 
+                ref={scrollContainerRef}
+                className="overflow-x-auto pb-4 scroll-smooth" 
+                style={{ maxWidth: '750px', margin: '0 auto', scrollbarWidth: 'thin', scrollbarColor: isDarkMode ? '#9333ea #374151' : '#9333ea #e5e7eb' }}
+              >
+                <div className="flex gap-6" style={{ width: 'max-content' }}>
+                  {(() => {
+                    const recentProjects = [projects[0], projects[1], projects[2]];
+                    
+                    return recentProjects.map((project, index) => (
+                      <div 
+                        key={index}
+                        className={`${themeClasses.cardBg} rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border ${themeClasses.cardBorder} overflow-hidden group w-80 flex-shrink-0 cursor-pointer`}
+                      >
+                        <div className="h-48 overflow-hidden relative">
+                          <img 
+                            src={project.image}
+                            alt={project.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <a 
+                              href={project.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors duration-200 shadow-lg"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <ExternalLink className="w-5 h-5 text-gray-900" />
+                            </a>
                           </div>
                         </div>
-                      ));
-                    })()}
-                  </div>
+                        <div className="p-6">
+                          <h3 className={`text-xl font-bold ${themeClasses.text} mb-3 group-hover:text-purple-400 transition-colors duration-200`}>{project.title}</h3>
+                          
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            <span className="text-xs text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30 font-medium">{project.timeline}</span>
+                            <span className="text-xs text-teal-400 bg-teal-500/20 px-3 py-1 rounded-full border border-teal-500/30 font-medium">{project.team}</span>
+                          </div>
+                          
+                          <p className={`${themeClasses.textSecondary} mb-4 leading-relaxed text-justify text-sm line-clamp-3`}>{project.description}</p>
+                          
+                          <div className="flex flex-wrap gap-2">
+                            {project.technologies.slice(0, 4).map((tech, techIndex) => (
+                              <span 
+                                key={techIndex}
+                                className={`text-xs ${themeClasses.cardBg} ${themeClasses.textSecondary} px-3 py-1 rounded-full hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-200 border ${themeClasses.cardBorder} hover:border-purple-500/50 cursor-default`}
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ));
+                  })()}
                 </div>
-                
-                <button
-                  onClick={() => handleScroll('left')}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-3 rounded-full shadow-xl hover:scale-110 transition-all duration-300 z-10 hidden sm:block"
-                  aria-label="Scroll left"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                
-                <button
-                  onClick={() => handleScroll('right')}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-3 rounded-full shadow-xl hover:scale-110 transition-all duration-300 z-10 hidden sm:block"
-                  aria-label="Scroll right"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
               </div>
               
-              <div className="flex justify-center">
-                <button
-                  onClick={() => setShowAllProjects(true)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl hover:scale-105 transition-all duration-300 font-semibold text-lg whitespace-nowrap shadow-lg hover:shadow-xl"
-                >
-                  View All Projects
-                </button>
-              </div>
+              <button
+                onClick={() => handleScroll('left')}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-3 rounded-full shadow-xl hover:scale-110 transition-all duration-300 z-10 hidden sm:block"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              
+              <button
+                onClick={() => handleScroll('right')}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-3 rounded-full shadow-xl hover:scale-110 transition-all duration-300 z-10 hidden sm:block"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                {projects.map((project, index) => (
-                  <div 
-                    key={index}
-                    className={`${themeClasses.cardBg} rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border ${themeClasses.cardBorder} overflow-hidden group`}
-                  >
-                    <div className="h-56 overflow-hidden relative">
-                      <img 
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                    <div className="p-8">
-                      <div className="flex justify-between items-start mb-6">
-                        <h3 className={`text-2xl font-bold ${themeClasses.text}`}>{project.title}</h3>
-                        <a 
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`${themeClasses.textSecondary} hover:text-blue-500 transition-colors duration-200 hover:scale-110 transform`}
-                        >
-                          <ExternalLink className="w-6 h-6" />
-                        </a>
-                      </div>
-                      
-                      <div className="flex flex-wrap gap-3 mb-6">
-                        <span className="text-sm text-blue-400 bg-blue-500/20 px-4 py-2 rounded-full border border-blue-500/30 font-medium">{project.timeline}</span>
-                        <span className="text-sm text-teal-400 bg-teal-500/20 px-4 py-2 rounded-full border border-teal-500/30 font-medium">{project.team}</span>
-                      </div>
-                      
-                      <p className={`${themeClasses.textSecondary} mb-8 leading-relaxed text-justify text-lg`}>{project.description}</p>
-                      
-                      <div className="flex flex-wrap gap-3">
-                        {project.technologies.map((tech, techIndex) => (
-                          <span 
-                            key={techIndex}
-                            className={`text-sm ${themeClasses.cardBg} ${themeClasses.textSecondary} px-4 py-2 rounded-full hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-200 border ${themeClasses.cardBorder} hover:border-purple-500/50 cursor-default`}
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="flex justify-center mt-12">
-                <button
-                  onClick={() => setShowAllProjects(false)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-10 py-4 rounded-xl hover:scale-105 transition-all duration-300 font-semibold text-lg"
-                >
-                  Show Less
-                </button>
-              </div>
-            </>
-          )}
+            
+            <div className="flex justify-center">
+              <button
+                onClick={() => setShowProjectsModal(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl hover:scale-105 transition-all duration-300 font-semibold text-lg whitespace-nowrap shadow-lg hover:shadow-xl"
+              >
+                View All Projects
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -837,6 +814,148 @@ function App() {
           </p>
         </div>
       </footer>
+
+      {/* Projects Modal */}
+      {showProjectsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setShowProjectsModal(false)}
+          ></div>
+          <div 
+            className={`relative ${themeClasses.cardBg} rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden border ${themeClasses.cardBorder} transform transition-all duration-300 animate-modal-in`}
+          >
+            <div className="sticky top-0 z-10 bg-gradient-to-r from-purple-600 to-pink-600 p-6 sm:p-8">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">All Projects</h2>
+                <button
+                  onClick={() => setShowProjectsModal(false)}
+                  className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all duration-200 hover:scale-110"
+                  aria-label="Close modal"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-6 sm:p-8 overflow-y-auto max-h-[calc(90vh-100px)]">
+              {!selectedProject ? (
+                <div className="relative">
+                  {/* Timeline vertical line */}
+                  <div className="absolute left-8 sm:left-12 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500 via-pink-500 to-purple-500"></div>
+                  
+                  {/* Timeline nodes */}
+                  <div className="space-y-8">
+                    {projects.map((project, index) => (
+                      <div 
+                        key={index}
+                        className="relative flex items-start gap-6 sm:gap-8 cursor-pointer group animate-timeline-node"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                        onClick={() => setSelectedProject(project)}
+                      >
+                        {/* Timeline dot */}
+                        <div className="relative z-10 flex-shrink-0">
+                          <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full ${themeClasses.cardBg} border-4 border-purple-500 shadow-xl flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-pink-500`}>
+                            <span className="text-2xl sm:text-3xl">{project.title.split(' ')[0]}</span>
+                          </div>
+                        </div>
+                        
+                        {/* Project box */}
+                        <div 
+                          className={`flex-1 ${themeClasses.cardBg} rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border ${themeClasses.cardBorder} p-5 sm:p-6 group-hover:border-purple-500/50`}
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <h3 className={`text-lg sm:text-xl font-bold ${themeClasses.text} group-hover:text-purple-400 transition-colors duration-200`}>{project.title}</h3>
+                            <span className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-400 border border-purple-500/30`}>
+                              {new Date(project.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                            </span>
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            <span className="text-xs text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30 font-medium">{project.timeline}</span>
+                            <span className="text-xs text-teal-400 bg-teal-500/20 px-3 py-1 rounded-full border border-teal-500/30 font-medium">{project.team}</span>
+                          </div>
+                          
+                          <p className={`${themeClasses.textSecondary} text-sm line-clamp-2`}>{project.description}</p>
+                          
+                          <div className="mt-4 flex items-center text-purple-400 text-sm font-medium group-hover:text-pink-400 transition-colors duration-200">
+                            <span>View Details</span>
+                            <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                /* Full project detail view */
+                <div className="animate-fade-in">
+                  <button
+                    onClick={() => setSelectedProject(null)}
+                    className="mb-6 flex items-center gap-2 text-purple-400 hover:text-pink-400 transition-colors duration-200 font-medium"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span>Back to Timeline</span>
+                  </button>
+                  
+                  <div className={`${themeClasses.cardBg} rounded-2xl shadow-xl overflow-hidden border ${themeClasses.cardBorder}`}>
+                    <div className="h-64 sm:h-80 overflow-hidden relative">
+                      <img 
+                        src={selectedProject.image}
+                        alt={selectedProject.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                      <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+                        <h2 className={`text-2xl sm:text-3xl font-bold text-white mb-2`}>{selectedProject.title}</h2>
+                        <div className="flex flex-wrap gap-3">
+                          <span className="text-sm text-blue-300 bg-blue-500/30 px-4 py-2 rounded-full border border-blue-400/50 font-medium">{selectedProject.timeline}</span>
+                          <span className="text-sm text-teal-300 bg-teal-500/30 px-4 py-2 rounded-full border border-teal-400/50 font-medium">{selectedProject.team}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="p-6 sm:p-8">
+                      <div className="flex justify-between items-start mb-6">
+                        <div className="flex-1">
+                          <h3 className={`text-xl font-bold ${themeClasses.text} mb-4`}>Description</h3>
+                          <p className={`${themeClasses.textSecondary} leading-relaxed text-justify text-base`}>{selectedProject.description}</p>
+                        </div>
+                        <a 
+                          href={selectedProject.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-3 rounded-full hover:scale-110 transition-transform duration-200 shadow-lg"
+                        >
+                          <ExternalLink className="w-6 h-6" />
+                        </a>
+                      </div>
+                      
+                      <div className="mb-6">
+                        <h3 className={`text-xl font-bold ${themeClasses.text} mb-4`}>Technologies</h3>
+                        <div className="flex flex-wrap gap-3">
+                          {selectedProject.technologies.map((tech, techIndex) => (
+                            <span 
+                              key={techIndex}
+                              className={`text-sm ${themeClasses.cardBg} ${themeClasses.textSecondary} px-4 py-2 rounded-full hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-200 border ${themeClasses.cardBorder} hover:border-purple-500/50 cursor-default`}
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
     </>
   );
