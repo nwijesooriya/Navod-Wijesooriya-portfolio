@@ -143,7 +143,7 @@ function App() {
 
   const projects = [
     {
-      title: "🌴 Coconut-Based Product Management System",
+      title: "🌴 CocoHub",
       description: "Coconut-based products management platform developed with the MERN stack. My primary function was Customer Relationship and Feedback Management, where I implemented CRUD operations for customer feedbacks to engagement between customers and the business. Features include adding, viewing, updating, and deleting customer feedbacks, along with plans to enhance date tracking for updates and search functionality. Tools & Tehnologies : Node.js, Express.js, React.js, and MongoDB ",
       technologies: ["MongoDB", "Express.js", "React.js", "Node.js", "VS Code"],
       timeline: "Feb 2025 – Jun 2025",
@@ -196,21 +196,21 @@ function App() {
       title: "🏠 BoardingBuddy",
       description: "A web-based boarding accommodation management platform designed to help students and boarding providers connect efficiently. The system allows users to browse available accommodations, manage listings, view boarding details, and streamline the accommodation search process through a user-friendly interface.",
       technologies: ["React.js", "Node.js", "Express.js", "MongoDB", "JavaScript"],
-      timeline: "2025",
-      team: "Group Project",
+      timeline: "Feb 2026 – May 2026",
+      team: "4 Members",
       github: "https://github.com/Pinidu-Subasinghe/BoardingBuddy",
       image: "https://images.pexels.com/photos/33613728/pexels-photo-33613728.jpeg?auto=compress&cs=tinysrgb&w=800",
-      date: "2025-01"
+      date: "2026-03"
     },
     {
       title: "🎓 Uni-Pilot",
       description: "A university assistance and student management platform developed to improve access to academic resources, student information, and university-related services. The application focuses on providing a centralized and user-friendly experience for students while demonstrating modern full-stack development practices.",
-      technologies: ["MERN Stack", "React.js", "Node.js", "Express.js", "MongoDB"],
-      timeline: "2025",
-      team: "Academic Project",
+      technologies: ["Java", "Spring Boot", "MySQL", "Thymeleaf", "Maven"],
+      timeline: "Feb 2026 – May 2026",
+      team: "4 Members",
       github: "https://github.com/nwijesooriya/Uni-Pilot",
       image: "https://images.pexels.com/photos/19125851/pexels-photo-19125851.jpeg?auto=compress&cs=tinysrgb&w=800",
-      date: "2025-03"
+      date: "2026-05"
     }
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -561,7 +561,10 @@ function App() {
             
             <div className="flex justify-center">
               <button
-                onClick={() => setShowProjectsModal(true)}
+                onClick={() => {
+                  setShowProjectsModal(true);
+                  setSelectedProject(null);
+                }}
                 className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl hover:scale-105 transition-all duration-300 font-semibold text-lg whitespace-nowrap shadow-lg hover:shadow-xl"
               >
                 View All Projects
